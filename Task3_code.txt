@@ -1,0 +1,132 @@
+# Name: Ojeswi Subhash Ambekar
+
+# Task: Exploratory Data Analysis - Retail
+
+In this task we will perform "Exploratory Data Analysis" on dataset "SampleSuperstore".As a business manager, we will try to find out the weak areas where we can work to make more profit. Also What other business problems we can derive by exploring the data.
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from plotnine import *
+import warnings
+warnings.filterwarnings('ignore')
+
+#Reading the dataset
+
+data=pd.read_csv("D:\SampleSuperstore.csv")
+
+#to print first 5 rows of dataset
+data.head()
+
+#to print last 5 rows of dataset
+data.tail()
+
+data.shape
+
+#to print full summary of dataset
+data.info()
+
+#to print statistical data
+data.describe()
+
+#to print missing values
+data.isnull()
+
+data.isnull().sum()
+
+#checking duplicate data
+data.duplicated().sum()
+
+#droping duplicate data
+data.drop_duplicates()
+
+data.nunique()
+
+column=['Postal Code']
+data1=data.drop(columns=column,axis=1)
+
+#checking correlation between different variables
+data1.corr()
+
+data1.head()
+
+# Data Visualization
+
+df = pd.DataFrame(data)
+
+X = list(df.iloc[:, 8])
+Y = list(df.iloc[:,1])
+
+plt.bar(X, Y, color='g')
+plt.title('Category vs Sub category')
+plt.xlabel("Sub-category")
+plt.ylabel("Category")
+plt.xticks(rotation=45)
+plt.show()
+
+
+data1.corr()
+
+data1.hist(bins=30,figsize=(20,15),color='red')
+plt.show()
+
+#printing total no. of states which are repeating
+data1["State"].value_counts()
+
+plt.figure(figsize=(15,15))
+sns.countplot(x=data1['State'])
+plt.xticks(rotation=90)
+plt.title("STATE")
+plt.show()
+
+profit_plot=(ggplot(data, aes(x='Sub-Category', y='Profit',fill='Sub-Category')) + geom_col() + coord_flip() + 
+             scale_fill_brewer(type='div', palette='Spectral') + theme_classic() + ggtitle('Pie Chart'))
+display(profit_plot)
+
+The above pie chart shows the profit and loss of each subcategories.
+1.Sub category named "Copies" has gained highest profit among other subcategories with zero loss.Also "Accessories" subcategory has more profit with minimum loss.
+2.Sub-category "Binders" has gained equal amount of loss and profit.
+
+ggplot(data,aes(x='Ship Mode', fill='Category'))+ geom_bar(stat='count')
+
+figsize=(14,8)
+sns.pairplot(data1,hue='Sub-Category')
+plt.show
+
+plt.figure(figsize=(10,4))
+sns.lineplot("Discount","Profit", data=data1, color='r',label="Discount")
+plt.legend()
+plt.show()
+
+data1=df[:]
+
+plot=pd.DataFrame(data1.groupby(['Ship Mode'])["Profit"].sum()).reset_index()
+plot1=pd.DataFrame(data1.groupby(['Segment'])["Profit"].sum()).reset_index()
+plot2=pd.DataFrame(data1.groupby(['Category'])["Profit"].sum()).reset_index()
+plot3=pd.DataFrame(data1.groupby(['Discount'])["Profit"].sum()).reset_index()
+
+# Which Ship mode brings the Highest Profit?
+
+ax=plot.plot(kind='bar',x="Ship Mode",y='Profit') 
+
+# Which segment brings the highest Profit?
+
+ax=plot1.plot(kind='bar',x='Segment',y="Profit")
+
+# Which Category brings the highest profit?
+
+ax=plot2.plot(kind='bar',x='Category',y='Profit')
+
+#Profit Analysis
+pd.DataFrame(data1["Profit"]).describe()
+
+# Top 10 cities with maximum profit
+
+city=data1[["City","Profit"]]
+plot3=pd.DataFrame(city.groupby(["City"])["Profit"].aggregate("sum").reset_index().sort_values("Profit",ascending=False))
+plot3.head(10)                 
+
+plot3.tail(10)
+
+From the above data visualization,we can see the states and category where profits can be high or low.We can improve in those states by providing discounts in prefered range so that the company and consumer will both be in profit.We have found the top 10 highest as well as lowest profit cities. In lowest cities we have to improve in strategies to produce more profit.
